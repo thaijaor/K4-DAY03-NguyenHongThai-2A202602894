@@ -1,0 +1,37 @@
+[
+  {
+    "id": "TC01",
+    "type": "direct_query",
+    "question": "Sân cầu lông mở cửa mấy giờ và giá thuê một giờ là bao nhiêu?",
+    "expected_behavior": "Agent trả lời trực tiếp từ System Prompt (giờ mở cửa, bảng giá), không gọi Tool nào.",
+    "complexity": "Low"
+  },
+  {
+    "id": "TC02",
+    "type": "single_tool_query",
+    "question": "Ngày 18/09/2026 từ 19:00 đến 21:00 còn sân nào trống không?",
+    "expected_behavior": "Agent gọi 'court_availability' với date='18/09/2026', time_range='19:00-21:00' và liệt kê đúng các sân/khung giờ còn trống.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC03",
+    "type": "court_booking",
+    "question": "Đặt giúp tôi sân số 2 lúc 20:00 ngày 18/09/2026, số điện thoại 0912345678.",
+    "expected_behavior": "Agent gọi 'book_court' với court_id='S2', datetime_str='20:00 18/09/2026', customer_phone='0912345678' và trả về mã booking.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC04",
+    "type": "multi_step_reasoning",
+    "question": "Tối thứ Sáu 18/09/2026 tôi muốn chơi 1 tiếng, sau 19:00. Kiểm tra sân nào còn trống rồi đặt luôn sân đầu tiên còn trống giúp tôi, số điện thoại 0912345678.",
+    "expected_behavior": "Agent gọi 'court_availability' trước, đọc Observation để chọn sân và khung giờ trống đầu tiên, sau đó gọi 'book_court' với đúng court_id và giờ vừa tìm được.",
+    "complexity": "High"
+  },
+  {
+    "id": "TC05",
+    "type": "edge_case_handling",
+    "question": "Đặt giúp tôi một sân lúc 18:00 thứ Bảy 19/09/2026, số điện thoại 0912345678.",
+    "expected_behavior": "Agent gọi 'court_availability', nhận kết quả FULLY_BOOKED, không gọi 'book_court', thông báo hết sân và gợi ý khung giờ trống khác từ dữ liệu Tool, không bịa sân trống.",
+    "complexity": "Medium"
+  }
+]

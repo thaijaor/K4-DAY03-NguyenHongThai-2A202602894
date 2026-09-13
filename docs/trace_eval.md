@@ -1,8 +1,8 @@
 # 📊 BÁO CÁO THU HOẠCH NGHIỆM THU BÀI LAB 3 (BƯỚC 3 — SUBMISSION ARTIFACT)
 
-> **Họ và Tên Học viên:** [Điền Họ và Tên]  
-> **Mã Sinh Viên / Mã Học viên:** [Điền MSSV]  
-> **Chủ đề Lựa chọn:** [Điền tên chủ đề đã chọn từ docs/DANH_SACH_DE_TAI.md hoặc Đề tài Mở]  
+> **Họ và Tên Học viên:** Nguyễn Hồng Thái  
+> **Mã Sinh Viên / Mã Học viên:** 2A202602894  
+> **Chủ đề Lựa chọn:** Đề tài Mở — Trợ lý Đặt sân Cầu lông (tra cứu sân trống + đặt sân)  
 
 ---
 
@@ -10,11 +10,11 @@
 
 | Tiêu chí Đánh giá | Mức độ (1 - 5) | Giải trình chi tiết lý do chọn điểm |
 | :--- | :---: | :--- |
-| **1. Multi-step Reasoning** | / 5 | Bài toán có yêu cầu chia nhỏ nhiều bước suy luận nối tiếp nhau không? |
-| **2. Tool Interaction** | / 5 | Hệ thống có cần kết nối với MCP Server / Cơ sở dữ liệu bên ngoài không? |
-| **3. Dynamic Decision** | / 5 | Bước tiếp theo có phụ thuộc vào kết quả quan sát bước trước không? |
-| **4. Long Horizon Goal** | / 5 | Hệ thống có phải giữ mục tiêu xuyên suốt qua nhiều lượt xử lý không? |
-| **TỔNG ĐIỂM AGENTIC FIT** | **/ 20** | *Nếu tổng điểm > 12/20: Bài toán rất phù hợp triển khai Agentic System.* |
+| **1. Multi-step Reasoning** | 4 / 5 | Yêu cầu "tìm sân trống rồi đặt" phải tách thành: tra lịch trống → chọn sân/khung giờ phù hợp → đặt sân. Chuỗi ngắn (2–3 bước) nên không đạt 5. |
+| **2. Tool Interaction** | 5 / 5 | Lịch sân thay đổi liên tục, LLM không thể tự biết sân nào trống; bắt buộc đọc dữ liệu thời gian thực và ghi booking vào hệ thống qua MCP Server. |
+| **3. Dynamic Decision** | 4 / 5 | Tham số `book_court` (court_id, giờ) lấy từ kết quả `court_availability`; nếu hết sân thì phải dừng đặt và gợi ý khung giờ khác thay vì đặt. |
+| **4. Long Horizon Goal** | 2 / 5 | Mục tiêu gói gọn trong một phiên đặt sân, không cần theo dõi qua nhiều ngày hay nhiều phiên. |
+| **TỔNG ĐIỂM AGENTIC FIT** | **15 / 20** | *> 12/20: phù hợp triển khai ReAct Agent.* |
 
 ---
 
