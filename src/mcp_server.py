@@ -21,6 +21,7 @@ class MCPCourtServer:
     def __init__(self, server_name: str = "smashhub-court-mcp-server"):
         self.server_name = server_name
         self.version = "2026.1.0"
+        self._request_id = 0
         
     def list_tools(self) -> List[Dict[str, Any]]:
         """Trả về danh sách các Tools chuẩn giao thức MCP"""
@@ -39,7 +40,20 @@ class MCPCourtServer:
         # 3. Đóng gói phản hồi và trả về Dict theo đúng chuẩn giao thức MCP JSON-RPC 2.0:
         #    - Các trường bắt buộc: "jsonrpc": "2.0", "server": self.server_name, "tool": tool_name, "result": content
         # --------------------------------------------------------------------------
-        return {}
+        self._request_id += 1
+        raw_result = dispatch_tool_call(tool_name, arguments or {})
+        try:
+            content = json.loads(raw_result)
+        except (TypeError, json.JSONDecodeError):
+            content = {"status": "EXECUTION_ERROR", "error": f"Tool '{tool_name}' trả về dữ liệu không phải JSON: {raw_result!r}"}
+
+        return {
+            "jsonrpc": "2.0",
+            "id": self._request_id,
+            "server": self.server_name,
+            "tool": tool_name,
+            "result": content
+        }
 
 
 if __name__ == "__main__":
