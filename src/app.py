@@ -28,7 +28,7 @@ from providers import get_llm_provider
 load_dotenv()
 
 def load_test_cases():
-    """Tải danh sách 5 test cases từ config/test_cases.json hoặc config/test_cases.example.json"""
+    """Tải danh sách test cases từ config/test_cases.json hoặc config/test_cases.example.json"""
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     config_path = os.path.join(base_dir, "config", "test_cases.json")
     if not os.path.exists(config_path):
@@ -77,11 +77,16 @@ def build_step_prompt(user_query: str, history: list) -> str:
     return "\n".join(lines)
 
 
-def run_react_agent(user_query: str, provider, mcp_server: MCPCourtServer) -> list:
+def run_react_agent(user_query: str, provider, mcp_server: MCPCourtServer, on_event=None) -> list:
     """
     [REACT AGENT LOOP] Thực thi vòng lặp Thought -> Action -> Observation với MCP Server
     Trả về danh sách trace log của phiên thực thi.
+    on_event (tùy chọn): callback nhận từng sự kiện ngay khi xảy ra (dùng cho UI demo stream trace trực tiếp).
     """
+    def emit(event: dict):
+        if on_event:
+            on_event(event)
+
     print(f"\n🤖 [REACT AGENT] Câu hỏi: {user_query}")
 
     step = 0
@@ -92,6 +97,7 @@ def run_react_agent(user_query: str, provider, mcp_server: MCPCourtServer) -> li
     while step < MAX_ITERATIONS:
         step += 1
         step_start_time = time.time()
+        emit({"event": "step_start", "step": step})
         print(f"\n--- 🔄 Vòng lặp ReAct Loop (Step {step}/{MAX_ITERATIONS}) ---")
 
         # Thought: LLM nhận câu hỏi + Observation các bước trước, quyết định bước kế tiếp
@@ -102,6 +108,8 @@ def run_react_agent(user_query: str, provider, mcp_server: MCPCourtServer) -> li
 
         thought = llm_response.get("thought", "Đang suy luận...")
         print(f"🧠 [Thought]: {thought}")
+        if llm_response.get("fallback_error"):
+            emit({"event": "llm_fallback", "step": step, "error": llm_response["fallback_error"]})
 
         # Trường hợp 1: LLM trả lời bằng văn bản -> Final Answer, dừng vòng lặp
         if llm_response.get("type") == "text":
@@ -115,12 +123,15 @@ def run_react_agent(user_query: str, provider, mcp_server: MCPCourtServer) -> li
                 "output": final_content,
                 "latency_ms": llm_latency_ms
             })
+            emit({"event": "trace", "entry": trace_logs[-1]})
             break
 
         # Trường hợp 2: LLM đề xuất gọi Tool -> Action qua MCP Server -> Observation nạp lại cho lượt sau
         tool_name = llm_response.get("tool_name")
         arguments = llm_response.get("arguments", {})
         print(f"🛠️ [Action]: {tool_name}({json.dumps(arguments, ensure_ascii=False)})")
+        emit({"event": "action", "step": step, "thought": thought, "tool_name": tool_name,
+              "arguments": arguments, "llm_latency_ms": llm_latency_ms})
 
         tool_start_time = time.time()
         mcp_result = mcp_server.call_tool(tool_name, arguments)
@@ -142,6 +153,7 @@ def run_react_agent(user_query: str, provider, mcp_server: MCPCourtServer) -> li
             "tool_latency_ms": tool_latency_ms,
             "latency_ms": round(llm_latency_ms + tool_latency_ms, 2)
         })
+        emit({"event": "trace", "entry": trace_logs[-1]})
     else:
         # Hết MAX_ITERATIONS mà LLM vẫn chưa đưa ra Final Answer
         final_content = f"Xin lỗi, tôi chưa hoàn thành được yêu cầu sau {MAX_ITERATIONS} bước xử lý. Vui lòng thử lại hoặc liên hệ quầy lễ tân."
@@ -155,6 +167,7 @@ def run_react_agent(user_query: str, provider, mcp_server: MCPCourtServer) -> li
             "output": final_content,
             "latency_ms": 0.0
         })
+        emit({"event": "trace", "entry": trace_logs[-1]})
 
     return trace_logs
 
@@ -192,7 +205,7 @@ if __name__ == "__main__":
                 print("\n👋 Đã thoát phiên tương tác.")
                 break
     elif "--all" in sys.argv:
-        print("🚀 [TEST SUITE MODE] Kiểm tra 5 Test Cases:")
+        print(f"🚀 [TEST SUITE MODE] Kiểm tra {len(tests)} Test Cases:")
         completed_count = 0
         todo_count = 0
         all_traces = []

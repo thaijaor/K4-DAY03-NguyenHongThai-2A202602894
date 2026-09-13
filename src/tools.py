@@ -71,8 +71,33 @@ TOOLS_SCHEMA = [
             },
             "required": ["court_id", "datetime_str", "customer_phone"]
         }
+    },
+
+    # Tool 3: Hành động (hủy booking)
+    {
+        "name": "cancel_booking",
+        "description": (
+            "Hủy một lượt đặt sân đã có tại SmashHub bằng mã booking. Cần số điện thoại đã dùng khi đặt để xác nhận. "
+            "Chỉ hủy được trước giờ chơi ít nhất 12 giờ. Trả về CANCELLED, NOT_FOUND, PHONE_MISMATCH hoặc TOO_LATE."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "booking_id": {
+                    "type": "string",
+                    "description": "Mã booking cần hủy (ví dụ: 'BK-1909-S1-001')"
+                },
+                "customer_phone": {
+                    "type": "string",
+                    "description": "Số điện thoại đã dùng khi đặt sân, 10 chữ số bắt đầu bằng 0"
+                }
+            },
+            "required": ["booking_id", "customer_phone"]
+        }
     }
 ]
+
+CANCEL_MIN_HOURS = 12  # Hủy miễn phí trước giờ chơi tối thiểu 12 giờ
 
 # ==============================================================================
 # 2. MÔ PHỎNG DỮ LIỆU & HÀM THỰC THI TOOL (EXECUTION LAYER)
@@ -91,7 +116,13 @@ BOOKINGS: Dict[str, Dict[int, List[str]]] = {
         18: ["S1", "S2", "S3", "S4"],
         19: ["S1", "S2", "S3", "S4"],
         20: ["S3", "S4"],
+        8: ["S1"],                       # Booking mẫu BK-1909-S1-001 (dùng cho test hủy sân)
     },
+}
+
+# Thông tin chi tiết từng booking có mã: {booking_id: {court_id, date, hour, customer_phone}}
+BOOKING_RECORDS: Dict[str, Dict[str, Any]] = {
+    "BK-1909-S1-001": {"court_id": "S1", "date": "19/09/2026", "hour": 8, "customer_phone": "0912345678"},
 }
 
 _booking_seq = 100
@@ -197,9 +228,11 @@ def execute_book_court(court_id: str, datetime_str: str, customer_phone: str) ->
     BOOKINGS.setdefault(date, {}).setdefault(hour, []).append(court_id)
     _booking_seq += 1
     price = _price_per_hour(day, hour)
+    booking_id = f"BK-{day.strftime('%d%m')}-{court_id}-{_booking_seq}"
+    BOOKING_RECORDS[booking_id] = {"court_id": court_id, "date": date, "hour": hour, "customer_phone": customer_phone.strip()}
     return json.dumps({
         "status": "SUCCESS",
-        "booking_id": f"BK-{day.strftime('%d%m')}-{court_id}-{_booking_seq}",
+        "booking_id": booking_id,
         "court_id": court_id,
         "datetime": f"{hour:02d}:00-{hour + 1:02d}:00 {date}",
         "customer_phone": customer_phone.strip(),
@@ -208,10 +241,44 @@ def execute_book_court(court_id: str, datetime_str: str, customer_phone: str) ->
     }, ensure_ascii=False)
 
 
+def execute_cancel_booking(booking_id: str, customer_phone: str) -> str:
+    """Hủy booking theo mã, xác nhận bằng số điện thoại"""
+    booking_id = booking_id.strip().upper()
+    record = BOOKING_RECORDS.get(booking_id)
+    if not record:
+        return _error("NOT_FOUND", f"Không tìm thấy booking '{booking_id}'.")
+    if customer_phone.strip() != record["customer_phone"]:
+        return _error("PHONE_MISMATCH", f"Số điện thoại không khớp với booking '{booking_id}'.")
+
+    start = _parse_date(record["date"]).replace(hour=record["hour"])
+    hours_left = (start - datetime.now()).total_seconds() / 3600
+    slot = f"sân {record['court_id']} lúc {record['hour']:02d}:00 ngày {record['date']}"
+    if hours_left < CANCEL_MIN_HOURS:
+        return json.dumps({
+            "status": "TOO_LATE",
+            "booking_id": booking_id,
+            "message": f"Không thể hủy {slot}: chỉ hủy được trước giờ chơi ít nhất {CANCEL_MIN_HOURS} giờ.",
+            "hours_before_start": round(hours_left, 1)
+        }, ensure_ascii=False)
+
+    booked = BOOKINGS.get(record["date"], {}).get(record["hour"], [])
+    if record["court_id"] in booked:
+        booked.remove(record["court_id"])
+    del BOOKING_RECORDS[booking_id]
+    return json.dumps({
+        "status": "CANCELLED",
+        "booking_id": booking_id,
+        "court_id": record["court_id"],
+        "datetime": f"{record['hour']:02d}:00-{record['hour'] + 1:02d}:00 {record['date']}",
+        "message": f"Đã hủy {slot}. Khung giờ này đã được mở lại cho khách khác."
+    }, ensure_ascii=False)
+
+
 # Router gọi tool thực tế
 TOOL_ROUTER = {
     "court_availability": execute_court_availability,
-    "book_court": execute_book_court
+    "book_court": execute_book_court,
+    "cancel_booking": execute_cancel_booking
 }
 
 def dispatch_tool_call(tool_name: str, arguments: Dict[str, Any]) -> str:

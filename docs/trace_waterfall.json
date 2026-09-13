@@ -4,8 +4,8 @@
     "query": "Sân cầu lông mở cửa mấy giờ và giá thuê một giờ là bao nhiêu?",
     "action_type": "FINAL_ANSWER",
     "thought": "OpenAI phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
-    "output": "Chào bạn, dưới đây là thông tin về giờ mở cửa và bảng giá thuê sân tại **SmashHub**:\n\n⏰ **Giờ hoạt động:** 06:00 - 22:00 hằng ngày (mỗi lượt đặt sân tính theo ca 1 giờ, bắt đầu vào đầu giờ tròn).\n\n💰 **Bảng giá thuê sân:**\n* **Thứ Hai - Thứ Sáu (trước 17:00):** 80.000 VNĐ/giờ.\n* **Thứ Hai - Thứ Sáu (từ 17:00 trở đi):** 120.000 VNĐ/giờ.\n* **Thứ Bảy & Chủ Nhật (cả ngày):** 120.000 VNĐ/giờ.\n\nNếu bạn cần kiểm tra sân trống hoặc đặt sân, vui lòng cung cấp ngày, khung giờ mong muốn cùng số điện thoại nhé!",
-    "latency_ms": 5507.4
+    "output": "Sân cầu lông SmashHub xin thông tin đến bạn về giờ hoạt động và bảng giá như sau:\n\n1. **Giờ mở cửa:** \n   - Từ **06:00 đến 22:00** tất cả các ngày trong tuần.\n\n2. **Bảng giá thuê sân:**\n   - **Thứ Hai – Thứ Sáu (trước 17:00):** 80.000 VNĐ/giờ\n   - **Thứ Hai – Thứ Sáu (từ 17:00 trở đi):** 120.000 VNĐ/giờ\n   - **Thứ Bảy & Chủ nhật (cả ngày):** 120.000 VNĐ/giờ\n\n*Lưu ý: Mỗi lượt đặt sân kéo dài 1 giờ và bắt đầu vào khung giờ tròn (ví dụ: 08:00, 09:00,...).*\n\nNếu bạn cần kiểm tra sân trống hoặc đặt sân, vui lòng cho mình biết ngày, giờ dự định chơi và số điện thoại nhé!",
+    "latency_ms": 4516.51
   },
   {
     "step": 1,
@@ -33,28 +33,28 @@
         }
       ]
     },
-    "llm_latency_ms": 3225.79,
-    "tool_latency_ms": 2.44,
-    "latency_ms": 3228.23
+    "llm_latency_ms": 2719.04,
+    "tool_latency_ms": 3.87,
+    "latency_ms": 2722.91
   },
   {
     "step": 2,
     "query": "Ngày 18/09/2026 từ 19:00 đến 21:00 còn sân nào trống không?",
     "action_type": "FINAL_ANSWER",
     "thought": "OpenAI phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
-    "output": "Vào ngày **18/09/2026**, trong khung giờ từ **19:00 đến 21:00**, thông tin sân trống như sau:\n\n- **Khung giờ 19:00 - 20:00**: Đã hết sân trống.\n- **Khung giờ 20:00 - 21:00**: Còn trống sân **S2** và **S4** (Giá: **120.000đ/giờ**).\n\nNếu quý khách muốn đặt sân nào trong khung giờ 20:00 - 21:00, vui lòng cung cấp **mã sân chọn** và **số điện thoại** để em hỗ trợ đặt sân ngay ạ!",
-    "latency_ms": 3743.14
+    "output": "Vào ngày 18/09/2026, trong khung giờ từ 19:00 đến 21:00:\n\n- **19:00 - 20:00:** Hiện tại đã hết sân trống.\n- **20:00 - 21:00:** Còn trống sân **S2** và **S4** với giá **120.000đ/giờ**.\n\nNếu quý khách muốn đặt sân cho khung giờ 20:00 - 21:00, xin vui lòng cho biết mã sân muốn chọn (S2 hoặc S4) cùng với **số điện thoại** để hoàn tất việc đặt sân nhé!",
+    "latency_ms": 4498.48
   },
   {
     "step": 1,
     "query": "Đặt giúp tôi sân số 2 lúc 20:00 ngày 18/09/2026, số điện thoại 0912345678.",
     "action_type": "TOOL_EXECUTION",
-    "thought": "OpenAI quyết định gọi công cụ 'book_court' với tham số: {\"customer_phone\": \"0912345678\", \"datetime_str\": \"20:00 18/09/2026\", \"court_id\": \"S2\"}",
+    "thought": "OpenAI quyết định gọi công cụ 'book_court' với tham số: {\"customer_phone\": \"0912345678\", \"court_id\": \"S2\", \"datetime_str\": \"20:00 18/09/2026\"}",
     "tool_name": "book_court",
     "arguments": {
       "customer_phone": "0912345678",
-      "datetime_str": "20:00 18/09/2026",
-      "court_id": "S2"
+      "court_id": "S2",
+      "datetime_str": "20:00 18/09/2026"
     },
     "jsonrpc_id": 2,
     "observation": {
@@ -66,27 +66,27 @@
       "price": 120000,
       "message": "Đặt thành công sân S2 lúc 20:00-21:00 ngày 18/09/2026, giá 120.000đ."
     },
-    "llm_latency_ms": 6780.33,
-    "tool_latency_ms": 0.18,
-    "latency_ms": 6780.51
+    "llm_latency_ms": 3499.49,
+    "tool_latency_ms": 0.57,
+    "latency_ms": 3500.06
   },
   {
     "step": 2,
     "query": "Đặt giúp tôi sân số 2 lúc 20:00 ngày 18/09/2026, số điện thoại 0912345678.",
     "action_type": "FINAL_ANSWER",
     "thought": "OpenAI phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
-    "output": "Dạ, em đã đặt thành công sân cầu lông cho anh/chị rồi ạ! \n\nThông tin đặt sân chi tiết:\n- **Mã booking:** BK-1809-S2-101\n- **Sân đặt:** Sân S2\n- **Thời gian:** 20:00 - 21:00, ngày 18/09/2026\n- **Số điện thoại:** 0912345678\n- **Giá tiền:** 120.000đ\n\n*Lưu ý:* Anh/chị có thể hủy sân miễn phí trước 12 giờ so với giờ chơi. Cảm ơn anh/chị đã lựa chọn SmashHub, chúc anh/chị có buổi chơi vui vẻ!",
-    "latency_ms": 3324.03
+    "output": "Đặt sân thành công! Dưới đây là thông tin chi tiết lượt đặt sân của bạn:\n\n- **Mã đặt sân (Booking ID):** BK-1809-S2-101\n- **Sân:** S2\n- **Thời gian:** 20:00 - 21:00 ngày 18/09/2026\n- **Số điện thoại:** 0912345678\n- **Giá tiền:** 120.000đ\n\nCảm ơn bạn đã lựa chọn SmashHub! Nếu cần hỗ trợ thay đổi hoặc hủy sân (trước giờ chơi ít nhất 12 tiếng), vui lòng liên hệ lại với chúng tôi.",
+    "latency_ms": 5520.28
   },
   {
     "step": 1,
     "query": "Tối thứ Sáu 18/09/2026 tôi muốn chơi 1 tiếng, sau 19:00. Kiểm tra sân nào còn trống rồi đặt luôn sân đầu tiên còn trống giúp tôi, số điện thoại 0912345678.",
     "action_type": "TOOL_EXECUTION",
-    "thought": "OpenAI quyết định gọi công cụ 'court_availability' với tham số: {\"time_range\": \"19:00-22:00\", \"date\": \"18/09/2026\"}",
+    "thought": "OpenAI quyết định gọi công cụ 'court_availability' với tham số: {\"date\": \"18/09/2026\", \"time_range\": \"19:00-22:00\"}",
     "tool_name": "court_availability",
     "arguments": {
-      "time_range": "19:00-22:00",
-      "date": "18/09/2026"
+      "date": "18/09/2026",
+      "time_range": "19:00-22:00"
     },
     "jsonrpc_id": 3,
     "observation": {
@@ -112,20 +112,20 @@
         }
       ]
     },
-    "llm_latency_ms": 3142.43,
+    "llm_latency_ms": 3672.01,
     "tool_latency_ms": 0.09,
-    "latency_ms": 3142.52
+    "latency_ms": 3672.1
   },
   {
     "step": 2,
     "query": "Tối thứ Sáu 18/09/2026 tôi muốn chơi 1 tiếng, sau 19:00. Kiểm tra sân nào còn trống rồi đặt luôn sân đầu tiên còn trống giúp tôi, số điện thoại 0912345678.",
     "action_type": "TOOL_EXECUTION",
-    "thought": "OpenAI quyết định gọi công cụ 'book_court' với tham số: {\"customer_phone\": \"0912345678\", \"court_id\": \"S4\", \"datetime_str\": \"20:00 18/09/2026\"}",
+    "thought": "OpenAI quyết định gọi công cụ 'book_court' với tham số: {\"datetime_str\": \"20:00 18/09/2026\", \"customer_phone\": \"0912345678\", \"court_id\": \"S4\"}",
     "tool_name": "book_court",
     "arguments": {
+      "datetime_str": "20:00 18/09/2026",
       "customer_phone": "0912345678",
-      "court_id": "S4",
-      "datetime_str": "20:00 18/09/2026"
+      "court_id": "S4"
     },
     "jsonrpc_id": 4,
     "observation": {
@@ -137,27 +137,27 @@
       "price": 120000,
       "message": "Đặt thành công sân S4 lúc 20:00-21:00 ngày 18/09/2026, giá 120.000đ."
     },
-    "llm_latency_ms": 2609.76,
-    "tool_latency_ms": 0.13,
-    "latency_ms": 2609.89
+    "llm_latency_ms": 3420.5,
+    "tool_latency_ms": 0.1,
+    "latency_ms": 3420.6
   },
   {
     "step": 3,
     "query": "Tối thứ Sáu 18/09/2026 tôi muốn chơi 1 tiếng, sau 19:00. Kiểm tra sân nào còn trống rồi đặt luôn sân đầu tiên còn trống giúp tôi, số điện thoại 0912345678.",
     "action_type": "FINAL_ANSWER",
     "thought": "OpenAI phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
-    "output": "Dạ, em đã đặt thành công sân cầu lông cho anh/chị với thông tin chi tiết như sau:\n\n- **Mã đặt sân (Booking ID):** BK-1809-S4-102\n- **Sân:** S4\n- **Thời gian:** 20:00 - 21:00, Thứ Sáu ngày 18/09/2026\n- **Số điện thoại:** 0912345678\n- **Giá tiền:** 120.000đ/giờ\n\nSmashHub xin cảm ơn và chúc anh/chị có buổi chơi cầu lông vui vẻ! Chú ý: Anh/chị có thể hủy sân miễn phí trước 12 giờ nếu có thay đổi lịch trình.",
-    "latency_ms": 3941.77
+    "output": "Dạ, em đã kiểm tra và đặt thành công sân cầu lông cho anh/chị. Thông tin chi tiết lượt đặt sân như sau:\n\n- **Mã đặt sân (Booking ID):** BK-1809-S4-102\n- **Sân đặt:** Sân S4\n- **Thời gian:** 20:00 - 21:00, Thứ Sáu ngày 18/09/2026\n- **Số điện thoại:** 0912345678\n- **Giá tiền:** 120.000đ/giờ\n\n*Lưu ý:* Nếu anh/chị cần hủy đặt sân, vui lòng thực hiện trước giờ chơi ít nhất 12 tiếng để được miễn phí. Cảm ơn anh/chị đã lựa chọn SmashHub!",
+    "latency_ms": 3336.49
   },
   {
     "step": 1,
     "query": "Đặt giúp tôi một sân lúc 18:00 thứ Bảy 19/09/2026, số điện thoại 0912345678.",
     "action_type": "TOOL_EXECUTION",
-    "thought": "OpenAI quyết định gọi công cụ 'court_availability' với tham số: {\"date\": \"19/09/2026\", \"time_range\": \"18:00-19:00\"}",
+    "thought": "OpenAI quyết định gọi công cụ 'court_availability' với tham số: {\"time_range\": \"18:00-19:00\", \"date\": \"19/09/2026\"}",
     "tool_name": "court_availability",
     "arguments": {
-      "date": "19/09/2026",
-      "time_range": "18:00-19:00"
+      "time_range": "18:00-19:00",
+      "date": "19/09/2026"
     },
     "jsonrpc_id": 5,
     "observation": {
@@ -193,16 +193,46 @@
         }
       ]
     },
-    "llm_latency_ms": 3667.45,
+    "llm_latency_ms": 3890.89,
     "tool_latency_ms": 0.12,
-    "latency_ms": 3667.57
+    "latency_ms": 3891.01
   },
   {
     "step": 2,
     "query": "Đặt giúp tôi một sân lúc 18:00 thứ Bảy 19/09/2026, số điện thoại 0912345678.",
     "action_type": "FINAL_ANSWER",
     "thought": "OpenAI phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
-    "output": "Rất tiếc, tất cả các sân tại SmashHub trong khung giờ **18:00 - 19:00 thứ Bảy ngày 19/09/2026** đều đã được đặt kín. \n\nDưới đây là các khung giờ trống gần nhất trong ngày để anh/chị tham khảo:\n- **16:00**: Sân **S3** (Giá: 120.000đ/giờ)\n- **20:00**: Sân **S1**, **S2** (Giá: 120.000đ/giờ)\n- **21:00**: Sân **S1**, **S2**, **S3**, **S4** (Giá: 120.000đ/giờ)\n\nAnh/chị có muốn đổi sang đặt sân ở một trong các khung giờ trên không ạ? Vui lòng phản hồi lại khung giờ và sân muốn chọn để em hỗ trợ đặt ngay nhé!",
-    "latency_ms": 3897.33
+    "output": "Dạ chào anh/chị, hiện tại tất cả các sân tại SmashHub trong khung giờ **18:00 - 19:00 ngày 19/09/2026** đều đã có khách đặt kín.\n\nAnh/Chị có thể tham khảo các khung giờ trống gần nhất trong ngày thứ Bảy 19/09/2026 dưới đây:\n- **16:00 - 17:00**: Sân S3 (Giá: 120.000đ/giờ)\n- **20:00 - 21:00**: Sân S1, S2 (Giá: 120.000đ/giờ)\n- **21:00 - 22:00**: Sân S1, S2, S3, S4 (Giá: 120.000đ/giờ)\n\nAnh/Chị có muốn chuyển sang đặt một trong các khung giờ trên không ạ? Vui lòng phản hồi để em hỗ trợ đặt sân giúp mình nhé!",
+    "latency_ms": 4014.47
+  },
+  {
+    "step": 1,
+    "query": "Tôi bận việc đột xuất, hủy giúp tôi booking BK-1909-S1-001, số điện thoại 0912345678.",
+    "action_type": "TOOL_EXECUTION",
+    "thought": "OpenAI quyết định gọi công cụ 'cancel_booking' với tham số: {\"customer_phone\": \"0912345678\", \"booking_id\": \"BK-1909-S1-001\"}",
+    "tool_name": "cancel_booking",
+    "arguments": {
+      "customer_phone": "0912345678",
+      "booking_id": "BK-1909-S1-001"
+    },
+    "jsonrpc_id": 6,
+    "observation": {
+      "status": "CANCELLED",
+      "booking_id": "BK-1909-S1-001",
+      "court_id": "S1",
+      "datetime": "08:00-09:00 19/09/2026",
+      "message": "Đã hủy sân S1 lúc 08:00 ngày 19/09/2026. Khung giờ này đã được mở lại cho khách khác."
+    },
+    "llm_latency_ms": 3351.36,
+    "tool_latency_ms": 0.15,
+    "latency_ms": 3351.51
+  },
+  {
+    "step": 2,
+    "query": "Tôi bận việc đột xuất, hủy giúp tôi booking BK-1909-S1-001, số điện thoại 0912345678.",
+    "action_type": "FINAL_ANSWER",
+    "thought": "OpenAI phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
+    "output": "Dạ, hệ thống đã ghi nhận hủy thành công lịch đặt sân của anh/chị. \n\n**Thông tin hủy đặt sân:**\n- **Mã booking:** BK-1909-S1-001\n- **Sân:** S1\n- **Thời gian:** 08:00 - 09:00 ngày 19/09/2026\n- **Số điện thoại:** 0912345678\n- **Trạng thái:** Đã hủy (CANCELLED)\n\nCảm ơn anh/chị đã thông báo trước. Hẹn gặp lại anh/chị vào dịp khác tại SmashHub!",
+    "latency_ms": 3441.17
   }
 ]

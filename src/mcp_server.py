@@ -64,14 +64,15 @@ if __name__ == "__main__":
     server = MCPCourtServer()
     tools = server.list_tools()
     print(f"✅ Khởi tạo thành công MCP Server: {server.server_name} (Version: {server.version})")
-    print(f"📦 Số lượng Tools công bố: {len(tools)}")
+    print(f"📦 Số lượng Tools công bố: {len(tools)} ({', '.join(t['name'] for t in tools)})")
 
-    # Kiểm tra trạng thái TODO 1.2 (Tool Schema)
-    book_tool = next((t for t in tools if t.get("name") == "book_court"), None)
-    if not book_tool or not book_tool.get("parameters", {}).get("properties"):
-        print("⏳ [TODO 1.2]: Tool 'book_court' chưa được định nghĩa properties trong 'src/tools.py'.")
+    # Kiểm tra trạng thái TODO 1.2 (Tool Schema): mọi tool phải có properties và required
+    incomplete = [t.get("name") for t in tools
+                  if not t.get("parameters", {}).get("properties") or not t.get("parameters", {}).get("required")]
+    if incomplete:
+        print(f"⏳ [TODO 1.2]: Tool {incomplete} chưa khai báo đủ properties/required trong 'src/tools.py'.")
     else:
-        print("✅ [TODO 1.2]: Tool 'book_court' đã có schema đầy đủ.")
+        print("✅ [TODO 1.2]: Tất cả Tool đã có schema đầy đủ (properties + required).")
 
     # Kiểm tra trạng thái TODO 2.1 (call_tool)
     test_result = server.call_tool("court_availability", {"date": "18/09/2026", "time_range": "19:00-21:00"})

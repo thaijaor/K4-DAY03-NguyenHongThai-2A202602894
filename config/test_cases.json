@@ -33,5 +33,12 @@
     "question": "Đặt giúp tôi một sân lúc 18:00 thứ Bảy 19/09/2026, số điện thoại 0912345678.",
     "expected_behavior": "Agent gọi 'court_availability', nhận kết quả FULLY_BOOKED, không gọi 'book_court', thông báo hết sân và gợi ý khung giờ trống khác từ dữ liệu Tool, không bịa sân trống.",
     "complexity": "Medium"
+  },
+  {
+    "id": "TC06",
+    "type": "booking_cancellation",
+    "question": "Tôi bận việc đột xuất, hủy giúp tôi booking BK-1909-S1-001, số điện thoại 0912345678.",
+    "expected_behavior": "Agent gọi 'cancel_booking' với booking_id='BK-1909-S1-001', customer_phone='0912345678', nhận CANCELLED và xác nhận đã hủy đúng sân, đúng giờ.",
+    "complexity": "Medium"
   }
 ]

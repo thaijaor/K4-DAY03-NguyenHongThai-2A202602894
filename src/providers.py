@@ -44,6 +44,13 @@ class MockOfflineProvider(BaseLLMProvider):
                 "content": "[Mock Agent Response]: Đã xử lý xong yêu cầu dựa trên kết quả từ MCP Server.",
                 "thought": "Đã có Observation từ bước trước, tổng hợp câu trả lời cuối."
             }
+        elif "hủy" in prompt_lower:
+            return {
+                "type": "tool_call",
+                "tool_name": "cancel_booking",
+                "arguments": {"booking_id": "BK-1909-S1-001", "customer_phone": "0912345678"},
+                "thought": "Người dùng yêu cầu hủy booking BK-1909-S1-001. Tôi sẽ gọi tool cancel_booking."
+            }
         elif "sân s2" in prompt_lower and "đặt" in prompt_lower:
             return {
                 "type": "tool_call",
@@ -143,7 +150,9 @@ class GeminiProvider(BaseLLMProvider):
 
         except Exception as e:
             print(f"⚠️ [Gemini API Warning]: Không thể kết nối live API ({str(e)}). Tự động fallback về Mock.")
-            return MockOfflineProvider().generate_with_tools(prompt, tools_schema, system_prompt)
+            result = MockOfflineProvider().generate_with_tools(prompt, tools_schema, system_prompt)
+            result["fallback_error"] = str(e)
+            return result
 
 
 class OpenAIProvider(BaseLLMProvider):
@@ -223,7 +232,9 @@ class OpenAIProvider(BaseLLMProvider):
                 }
         except Exception as e:
             print(f"⚠️ [OpenAI API Warning]: Không thể kết nối live API ({str(e)}). Tự động fallback về Mock.")
-            return MockOfflineProvider().generate_with_tools(prompt, tools_schema, system_prompt)
+            result = MockOfflineProvider().generate_with_tools(prompt, tools_schema, system_prompt)
+            result["fallback_error"] = str(e)
+            return result
 
 
 def get_llm_provider() -> BaseLLMProvider:

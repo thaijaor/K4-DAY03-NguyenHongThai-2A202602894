@@ -2,7 +2,7 @@
 
 > **Họ và Tên Học viên:** Nguyễn Hồng Thái  
 > **Mã Sinh Viên / Mã Học viên:** 2A202602894  
-> **Chủ đề Lựa chọn:** Đề tài Mở — Trợ lý Đặt sân Cầu lông (tra cứu sân trống + đặt sân)  
+> **Chủ đề Lựa chọn:** Đề tài Mở — Trợ lý Đặt sân Cầu lông (tra cứu sân trống + đặt sân + hủy sân)  
 
 ---
 
@@ -11,8 +11,8 @@
 | Tiêu chí Đánh giá | Mức độ (1 - 5) | Giải trình chi tiết lý do chọn điểm |
 | :--- | :---: | :--- |
 | **1. Multi-step Reasoning** | 4 / 5 | Yêu cầu "tìm sân trống rồi đặt" phải tách thành: tra lịch trống → chọn sân/khung giờ phù hợp → đặt sân. Chuỗi ngắn (2–3 bước) nên không đạt 5. |
-| **2. Tool Interaction** | 5 / 5 | Lịch sân thay đổi liên tục, LLM không thể tự biết sân nào trống; bắt buộc đọc dữ liệu thời gian thực và ghi booking vào hệ thống qua MCP Server. |
-| **3. Dynamic Decision** | 4 / 5 | Tham số `book_court` (court_id, giờ) lấy từ kết quả `court_availability`; nếu hết sân thì phải dừng đặt và gợi ý khung giờ khác thay vì đặt. |
+| **2. Tool Interaction** | 5 / 5 | Lịch sân thay đổi liên tục, LLM không thể tự biết sân nào trống; bắt buộc đọc dữ liệu thời gian thực, ghi và hủy booking qua 3 tool trên MCP Server (`court_availability`, `book_court`, `cancel_booking`). |
+| **3. Dynamic Decision** | 4 / 5 | Tham số `book_court` (court_id, giờ) lấy từ kết quả `court_availability`; nếu hết sân thì phải dừng đặt và gợi ý khung giờ khác. Khi hủy, câu trả lời phụ thuộc trạng thái `cancel_booking` trả về (CANCELLED / NOT_FOUND / PHONE_MISMATCH / TOO_LATE). |
 | **4. Long Horizon Goal** | 2 / 5 | Mục tiêu gói gọn trong một phiên đặt sân, không cần theo dõi qua nhiều ngày hay nhiều phiên. |
 | **TỔNG ĐIỂM AGENTIC FIT** | **15 / 20** | *> 12/20: phù hợp triển khai ReAct Agent.* |
 
@@ -31,11 +31,11 @@ Dán 1 đoạn trích xuất log tiêu biểu từ file `docs/trace_waterfall.js
   {
     "step": 1,
     "action_type": "TOOL_EXECUTION",
-    "thought": "OpenAI quyết định gọi công cụ 'court_availability' với tham số: {\"time_range\": \"19:00-22:00\", \"date\": \"18/09/2026\"}",
+    "thought": "OpenAI quyết định gọi công cụ 'court_availability' với tham số: {\"date\": \"18/09/2026\", \"time_range\": \"19:00-22:00\"}",
     "tool_name": "court_availability",
     "arguments": {
-      "time_range": "19:00-22:00",
-      "date": "18/09/2026"
+      "date": "18/09/2026",
+      "time_range": "19:00-22:00"
     },
     "jsonrpc_id": 3,
     "observation": {
@@ -61,17 +61,17 @@ Dán 1 đoạn trích xuất log tiêu biểu từ file `docs/trace_waterfall.js
         }
       ]
     },
-    "latency_ms": 3142.52
+    "latency_ms": 3672.1
   },
   {
     "step": 2,
     "action_type": "TOOL_EXECUTION",
-    "thought": "OpenAI quyết định gọi công cụ 'book_court' với tham số: {\"customer_phone\": \"0912345678\", \"court_id\": \"S4\", \"datetime_str\": \"20:00 18/09/2026\"}",
+    "thought": "OpenAI quyết định gọi công cụ 'book_court' với tham số: {\"datetime_str\": \"20:00 18/09/2026\", \"customer_phone\": \"0912345678\", \"court_id\": \"S4\"}",
     "tool_name": "book_court",
     "arguments": {
+      "datetime_str": "20:00 18/09/2026",
       "customer_phone": "0912345678",
-      "court_id": "S4",
-      "datetime_str": "20:00 18/09/2026"
+      "court_id": "S4"
     },
     "jsonrpc_id": 4,
     "observation": {
@@ -83,14 +83,14 @@ Dán 1 đoạn trích xuất log tiêu biểu từ file `docs/trace_waterfall.js
       "price": 120000,
       "message": "Đặt thành công sân S4 lúc 20:00-21:00 ngày 18/09/2026, giá 120.000đ."
     },
-    "latency_ms": 2609.89
+    "latency_ms": 3420.6
   },
   {
     "step": 3,
     "action_type": "FINAL_ANSWER",
     "thought": "OpenAI phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
-    "output": "Dạ, em đã đặt thành công sân cầu lông cho anh/chị với thông tin chi tiết như sau:\n\n- **Mã đặt sân (Booking ID):** BK-1809-S4-102\n- **Sân:** S4\n- **Thời gian:** 20:00 - 21:00, Thứ Sáu ngày 18/09/2026\n- **Số điện thoại:** 0912345678\n- **Giá tiền:** 120.000đ/giờ",
-    "latency_ms": 3941.77
+    "output": "Dạ, em đã kiểm tra và đặt thành công sân cầu lông cho anh/chị. Thông tin chi tiết lượt đặt sân như sau:\n\n- **Mã đặt sân (Booking ID):** BK-1809-S4-102\n- **Sân đặt:** Sân S4\n- **Thời gian:** 20:00 - 21:00, Thứ Sáu ngày 18/09/2026\n- **Số điện thoại:** 0912345678\n- **Giá tiền:** 120.000đ/giờ",
+    "latency_ms": 3336.49
   }
 ]
 ```
@@ -100,8 +100,8 @@ Dán 1 đoạn trích xuất log tiêu biểu từ file `docs/trace_waterfall.js
 ## 3. TỔNG KẾT KẾT QUẢ NGHIỆM THU & NỘP BÀI
 
 - [x] Đã điền API Key thật trong `.env` và xác nhận Agent chạy mượt mà trên LLM API thật (Gemini/OpenAI).
-- **Tổng số Test Cases đã chạy thành công:** 5 / 5 test cases.
-- **Số lượt gọi Tool qua MCP Server chính xác:** 5 / 5 lượt (TC02: 1, TC03: 1, TC04: 2, TC05: 1; TC01 trả lời trực tiếp, không gọi Tool).
+- **Tổng số Test Cases đã chạy thành công:** 6 / 6 test cases.
+- **Số lượt gọi Tool qua MCP Server chính xác:** 6 / 6 lượt (TC02: 1, TC03: 1, TC04: 2, TC05: 1, TC06: 1; TC01 trả lời trực tiếp, không gọi Tool).
 - **Kết quả đẩy Repo nộp bài:** [x] Đã Commit và Push mã nguồn thành công lên GitHub cá nhân.
 
 ---
