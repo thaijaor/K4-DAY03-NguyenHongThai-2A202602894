@@ -24,24 +24,73 @@
 
 Dán 1 đoạn trích xuất log tiêu biểu từ file `docs/trace_waterfall.json` sinh ra từ phản hồi LLM API thật:
 
+**TC04 (multi_step_reasoning)** — Provider `OpenAIProvider` (endpoint OpenAI-compatible), model `ag/gemini-3.6-flash-medium`. Agent tra sân trống trước, chọn sân S4 lúc 20:00 từ Observation (S2 đã được đặt ở TC03), rồi mới đặt sân:
+
 ```json
 [
   {
     "step": 1,
     "action_type": "TOOL_EXECUTION",
-    "tool_name": "academic_query",
+    "thought": "OpenAI quyết định gọi công cụ 'court_availability' với tham số: {\"time_range\": \"19:00-22:00\", \"date\": \"18/09/2026\"}",
+    "tool_name": "court_availability",
     "arguments": {
-      "student_id": "SV2026001"
+      "time_range": "19:00-22:00",
+      "date": "18/09/2026"
     },
+    "jsonrpc_id": 3,
     "observation": {
       "status": "SUCCESS",
-      "student_id": "SV2026001",
-      "data": {
-        "full_name": "Nguyễn Văn An",
-        "gpa": 3.85
-      }
+      "date": "18/09/2026",
+      "time_range": "19:00-22:00",
+      "available_slots": [
+        {
+          "time": "20:00",
+          "free_courts": [
+            "S4"
+          ],
+          "price_per_hour": 120000
+        },
+        {
+          "time": "21:00",
+          "free_courts": [
+            "S2",
+            "S3",
+            "S4"
+          ],
+          "price_per_hour": 120000
+        }
+      ]
     },
-    "latency_ms": 120.5
+    "latency_ms": 3142.52
+  },
+  {
+    "step": 2,
+    "action_type": "TOOL_EXECUTION",
+    "thought": "OpenAI quyết định gọi công cụ 'book_court' với tham số: {\"customer_phone\": \"0912345678\", \"court_id\": \"S4\", \"datetime_str\": \"20:00 18/09/2026\"}",
+    "tool_name": "book_court",
+    "arguments": {
+      "customer_phone": "0912345678",
+      "court_id": "S4",
+      "datetime_str": "20:00 18/09/2026"
+    },
+    "jsonrpc_id": 4,
+    "observation": {
+      "status": "SUCCESS",
+      "booking_id": "BK-1809-S4-102",
+      "court_id": "S4",
+      "datetime": "20:00-21:00 18/09/2026",
+      "customer_phone": "0912345678",
+      "price": 120000,
+      "message": "Đặt thành công sân S4 lúc 20:00-21:00 ngày 18/09/2026, giá 120.000đ."
+    },
+    "latency_ms": 2609.89
+  },
+  {
+    "step": 3,
+    "action_type": "FINAL_ANSWER",
+    "thought": "OpenAI phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
+    "output": "Dạ, em đã đặt thành công sân cầu lông cho anh/chị với thông tin chi tiết như sau:\n\n- **Mã đặt sân (Booking ID):** BK-1809-S4-102\n- **Sân:** S4\n- **Thời gian:** 20:00 - 21:00, Thứ Sáu ngày 18/09/2026\n- **Số điện thoại:** 0912345678\n- **Giá tiền:** 120.000đ/giờ",
+    "latency_ms": 3941.77
   }
 ]
 ```
@@ -50,9 +99,9 @@ Dán 1 đoạn trích xuất log tiêu biểu từ file `docs/trace_waterfall.js
 
 ## 3. TỔNG KẾT KẾT QUẢ NGHIỆM THU & NỘP BÀI
 
-- [ ] Đã điền API Key thật trong `.env` và xác nhận Agent chạy mượt mà trên LLM API thật (Gemini/OpenAI).
-- **Tổng số Test Cases đã chạy thành công:** ___ / 5 test cases.
-- **Số lượt gọi Tool qua MCP Server chính xác:** ___ lượt.
+- [x] Đã điền API Key thật trong `.env` và xác nhận Agent chạy mượt mà trên LLM API thật (Gemini/OpenAI).
+- **Tổng số Test Cases đã chạy thành công:** 5 / 5 test cases.
+- **Số lượt gọi Tool qua MCP Server chính xác:** 5 / 5 lượt (TC02: 1, TC03: 1, TC04: 2, TC05: 1; TC01 trả lời trực tiếp, không gọi Tool).
 - **Kết quả đẩy Repo nộp bài:** [ ] Đã Commit và Push mã nguồn thành công lên GitHub cá nhân.
 
 ---
