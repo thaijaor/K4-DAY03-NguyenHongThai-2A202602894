@@ -38,25 +38,25 @@ class MockOfflineProvider(BaseLLMProvider):
         prompt_lower = prompt.lower()
         
         # Mô phỏng nhận diện intent gọi Tool
-        if "sv2026001" in prompt_lower and "đặt lịch" in prompt_lower:
+        if "sân s2" in prompt_lower and "đặt" in prompt_lower:
             return {
                 "type": "tool_call",
-                "tool_name": "schedule_appointment",
-                "arguments": {"student_id": "SV2026001", "datetime_str": "14:00 15/09/2026", "advisor_name": "PGS.TS Nguyễn Văn A"},
-                "thought": "Người dùng yêu cầu đặt lịch hẹn tư vấn cho sinh viên SV2026001. Tôi sẽ gọi tool schedule_appointment."
+                "tool_name": "book_court",
+                "arguments": {"court_id": "S2", "datetime_str": "20:00 18/09/2026", "customer_phone": "0912345678"},
+                "thought": "Người dùng yêu cầu đặt sân S2 lúc 20:00 ngày 18/09/2026. Tôi sẽ gọi tool book_court."
             }
-        elif "sv2026001" in prompt_lower or "tra cứu" in prompt_lower:
+        elif "trống" in prompt_lower or "đặt" in prompt_lower:
             return {
                 "type": "tool_call",
-                "tool_name": "academic_query",
-                "arguments": {"student_id": "SV2026001"},
-                "thought": "Người dùng muốn tra cứu thông tin học vụ của sinh viên SV2026001. Tôi sẽ gọi tool academic_query."
+                "tool_name": "court_availability",
+                "arguments": {"date": "18/09/2026", "time_range": "19:00-21:00"},
+                "thought": "Người dùng muốn biết sân trống ngày 18/09/2026. Tôi sẽ gọi tool court_availability."
             }
         else:
             return {
                 "type": "text",
-                "content": f"[Mock Agent Response]: Xin chào! Quy chế học vụ VinUni yêu cầu sinh viên tích lũy tối thiểu 120 tín chỉ và duy trì GPA trên 2.0 để tốt nghiệp.",
-                "thought": "Câu hỏi chung về quy chế học vụ, trả lời trực tiếp không cần gọi Tool."
+                "content": f"[Mock Agent Response]: SmashHub mở cửa 06:00 - 22:00, giá 80.000đ/giờ ngày thường trước 17:00 và 120.000đ/giờ giờ cao điểm, cuối tuần.",
+                "thought": "Câu hỏi chung về giờ mở cửa và bảng giá, trả lời trực tiếp không cần gọi Tool."
             }
 
 

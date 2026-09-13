@@ -14,11 +14,11 @@ if sys.stdout.encoding != 'utf-8':
     except Exception:
         pass
 
-class MCPAcademicServer:
+class MCPCourtServer:
     """
     Giả lập MCP Server tuân thủ chuẩn giao thức Model Context Protocol
     """
-    def __init__(self, server_name: str = "vinuni-academic-mcp-server"):
+    def __init__(self, server_name: str = "smashhub-court-mcp-server"):
         self.server_name = server_name
         self.version = "2026.1.0"
         
@@ -44,25 +44,25 @@ class MCPAcademicServer:
 
 if __name__ == "__main__":
     print("==========================================================")
-    print("🔌 KIỂM THỬ ĐỘC LẬP MCP SERVER (vinuni-academic-mcp-server)")
+    print("🔌 KIỂM THỬ ĐỘC LẬP MCP SERVER (smashhub-court-mcp-server)")
     print("==========================================================")
-    
-    server = MCPAcademicServer()
+
+    server = MCPCourtServer()
     tools = server.list_tools()
     print(f"✅ Khởi tạo thành công MCP Server: {server.server_name} (Version: {server.version})")
     print(f"📦 Số lượng Tools công bố: {len(tools)}")
-    
+
     # Kiểm tra trạng thái TODO 1.2 (Tool Schema)
-    sched_tool = next((t for t in tools if t.get("name") == "schedule_appointment"), None)
-    if sched_tool and not sched_tool.get("parameters", {}).get("properties"):
-        print("⏳ [TODO 1.2]: Tool 'schedule_appointment' chưa được định nghĩa properties trong 'src/tools.py'.")
+    book_tool = next((t for t in tools if t.get("name") == "book_court"), None)
+    if not book_tool or not book_tool.get("parameters", {}).get("properties"):
+        print("⏳ [TODO 1.2]: Tool 'book_court' chưa được định nghĩa properties trong 'src/tools.py'.")
     else:
-        print("✅ [TODO 1.2]: Tool 'schedule_appointment' đã có schema đầy đủ.")
+        print("✅ [TODO 1.2]: Tool 'book_court' đã có schema đầy đủ.")
 
     # Kiểm tra trạng thái TODO 2.1 (call_tool)
-    test_result = server.call_tool("academic_query", {"student_id": "SV2026001"})
+    test_result = server.call_tool("court_availability", {"date": "18/09/2026", "time_range": "19:00-21:00"})
     if not test_result:
         print("⏳ [TODO 2.1]: Hàm call_tool() đang trả về rỗng. Học viên hãy hoàn thiện TODO 2.1 trong 'src/mcp_server.py'!")
     else:
-        print(f"✅ [TODO 2.1]: Test dispatch tool 'academic_query' thành công:")
+        print(f"✅ [TODO 2.1]: Test dispatch tool 'court_availability' thành công:")
         print(f"   Phản hồi JSON-RPC: {json.dumps(test_result, ensure_ascii=False)}")
